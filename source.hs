@@ -57,8 +57,8 @@ findErrors _ []  = "The word was not the correct length."
 findErrors [] _  = "The word was not the correct length."
 findErrors (x:xs) (y:ys)
     | x == y    = findErrors xs ys
-    | otherwise = y : " should have been " ++ [x] ++ ", which is: " ++
-                  show (morse x) ++ "\n" ++ findErrors xs ys
+    | otherwise = "\n" ++ y : " should have been " ++ [x] ++ ", which is: " ++
+                  show (morse x) ++ findErrors xs ys
 
 getWord = do
     wordsList <- fmap words (readFile "words.txt")
@@ -85,8 +85,8 @@ findErrorsMorse answer guess = findErrorsMorse' (words answer) (words guess)
     findErrorsMorse' [] _ = []
     findErrorsMorse' (x:xs) (y:ys)
         | x == y    = "" ++ findErrorsMorse' xs ys
-        | otherwise = y ++ " should have been " ++ x ++ " which is: " ++
-                      [unmorse (Morse y)] ++ "\n" ++ findErrorsMorse' xs ys
+        | otherwise = "\"" ++ y ++ "\" should have been \"" ++ x ++ "\" which is: " ++
+                      [unmorse (Morse x)] ++ "\n" ++ findErrorsMorse' xs ys
 
 wordsToMorse = do
     answer <- fmap (filter (/= '-') . map toUpper) getWord
@@ -96,7 +96,8 @@ wordsToMorse = do
         putStrLn "Correct!"
         wordsToMorse
     else do
-        putStrLn $ "Incorrect! The code was: " ++ show (morseCode answer)
+        putStrLn $ "Incorrect! The code was: " ++ show (morseCode answer) ++
+                   "\nNot:                     " ++ guess
         putStrLn $ findErrorsMorse (show $ morseCode answer) guess
         wordsToMorse
 
